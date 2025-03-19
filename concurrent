@@ -32,3 +32,4 @@ int main() {
     printf("Both threads completed\n");
     return 0;
 }
+https://github.com/dhruthi6/Operating-Systems-using-C
