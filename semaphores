@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+sem_t port_semaphore;  // Semaphore declaration
+
+void *thread1(void *arg) {
+    printf("Thread 1: Waiting to enter critical section...\n");
+    sem_wait(&port_semaphore);  // Decrement semaphore (enter critical section)
+    printf("Thread 1: Entered critical section\n");
+
+    // Critical section
+    printf("Thread 1: Working...\n");
+
+    sem_post(&port_semaphore);  // Increment semaphore (leave critical section)
+    printf("Thread 1: Left critical section\n");
+    return NULL;
+}
+
+void *thread2(void *arg) {
+    printf("Thread 2: Waiting to enter critical section...\n");
+    sem_wait(&port_semaphore);  // Decrement semaphore (enter critical section)
+    printf("Thread 2: Entered critical section\n");
+
+    // Critical section
+    printf("Thread 2: Working...\n");
+
+    sem_post(&port_semaphore);  // Increment semaphore (leave critical section)
+    printf("Thread 2: Left critical section\n");
+    return NULL;
+}
+
+int main() {
+    pthread_t t1, t2;
+
+    sem_init(&port_semaphore, 0, 1);  // Initialize semaphore to 1 (allow 1 thread at a time)
+
+    pthread_create(&t1, NULL, thread1, NULL);
+    pthread_create(&t2, NULL, thread2, NULL);
+
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    sem_destroy(&port_semaphore);  // Clean up semaphore
+
+    return 0;
+}
